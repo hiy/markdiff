@@ -18,7 +18,10 @@ module Markdiff
       operations.sort_by {|operation| i += 1; [-operation.priority, i] }.each do |operation|
         case operation
         when ::Markdiff::Operations::AddChildOperation
-          operation.target_node.add_child(operation.inserted_node)
+          # FIX for korean language
+          fragment = Nokogiri::HTML.fragment(operation.inserted_node)
+          operation.target_node.add_child(fragment.children.first)
+          # operation.target_node.add_child(operation.inserted_node)
           mark_li_or_tr_as_changed(operation.target_node)
           mark_top_level_node_as_changed(operation.target_node)
         when ::Markdiff::Operations::AddDataBeforeHrefOperation
